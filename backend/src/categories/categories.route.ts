@@ -1,31 +1,19 @@
-// استيراد Router من مكتبة Express
-import { Router } from "express"; 
-// - Router: يستخدم لإنشاء مسارات مخصصة لتنظيم الطلبات في التطبيق.
+import {Router} from 'express';
+import categoriesService from "./categories.service";
+import subcategoriesRoute from "../subcategories/subcategories.route";
+import categoriesValidation from "./categories.validation";
 
-// استيراد الكائن categoriesService
-import categoriesService from "./categories.service"; 
-// - يحتوي على الوظائف التي تنفذ العمليات على التصنيفات (CRUD).
+const categoriesRouter: Router = Router();
 
-// إنشاء كائن Router
-const categoriesRouter: Router = Router(); 
-// - هذا الكائن سيحتوي على جميع المسارات المتعلقة بالتصنيفات.
+categoriesRouter.use('/:categoryId/subcategories', subcategoriesRoute);
 
-// تعريف المسار الأساسي "/"
-categoriesRouter.route("/")
-    .get(categoriesService.getAll) 
-    // - يتم تنفيذ الدالة getAll عند إرسال طلب GET لجلب جميع التصنيفات.
-    .post(categoriesService.createOne); 
-    // - يتم تنفيذ الدالة createOne عند إرسال طلب POST لإنشاء تصنيف جديد.
+categoriesRouter.route('/')
+    .get(categoriesService.getAll)
+    .post(categoriesValidation.createOne, categoriesService.createOne);
 
-// تعريف المسار الديناميكي "/:id" (معرّف التصنيف)
 categoriesRouter.route('/:id')
-    .get(categoriesService.getOne) 
-    // - يتم تنفيذ الدالة getOne عند إرسال طلب GET لجلب تصنيف بناءً على المعرف.
-    .put(categoriesService.updateOne) 
-    // - يتم تنفيذ الدالة updateOne عند إرسال طلب PUT لتحديث التصنيف بناءً على المعرف.
-    .delete(categoriesService.deleteOne); 
-    // - يتم تنفيذ الدالة deleteOne عند إرسال طلب DELETE لحذف التصنيف بناءً على المعرف.
+    .get(categoriesValidation.getOne, categoriesService.getOne)
+    .put(categoriesValidation.updateOne, categoriesService.updateOne)
+    .delete(categoriesValidation.deleteOne, categoriesService.deleteOne);
 
-// تصدير Router لاستخدامه في ملفات أخرى
-export default categoriesRouter; 
-// - يمكن استيراده وربطه في ملف التطبيق الرئيسي (main application file) مثل `app.ts`.
+export default categoriesRouter;

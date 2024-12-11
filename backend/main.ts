@@ -1,4 +1,5 @@
 import express from 'express';
+import hpp from "hpp"
 import { Server } from "http";
 import path from 'path';
 import dotenv from 'dotenv';
@@ -10,6 +11,7 @@ const app: express.Application = express();
 app.use(express.json({ limit: '10kb' }));
 let server: Server;
 dotenv.config();
+app.use(hpp({whitelist: ['price']}));
 i18n.configure({
     locales: ['en', 'ar'],
     directory: path.join(__dirname, 'locales'),
